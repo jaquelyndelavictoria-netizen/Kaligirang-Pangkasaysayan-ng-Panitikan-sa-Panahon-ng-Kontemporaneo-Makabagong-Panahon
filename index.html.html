@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagsusuri sa Panitikang Kontemporaryo - Grade 10</title>
+  
+  <!-- Google Fonts: Fredoka & Sniglet for a playful, friendly look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Sniglet:wght@400;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-color: #f3f8fe;
+      --card-bg: #ffffff;
+      --primary-color: #6c5ce7;
+      --primary-dark: #5b4bc4;
+      --text-color: #2d3436;
+      --correct-bg: #d4edda;
+      --correct-border: #2ed573;
+      --correct-text: #155724;
+      --incorrect-bg: #f8d7da;
+      --incorrect-border: #ff4757;
+      --incorrect-text: #721c24;
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.5;
+      padding: 20px 15px 40px;
+    }
+
+    header {
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      max-width: 800px;
+      margin: 0 auto 20px auto;
+      padding: 15px 25px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 3px solid #e0e0e0;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Sniglet', cursive;
+    }
+
+    .title-area h1 {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .title-area p {
+      font-size: 0.9rem;
+      color: #636e72;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score-board {
+      text-align: right;
+      background-color: #ffeaa7;
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: 2px solid #fdcb6e;
+    }
+
+    .score-board span {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #d63031;
+    }
+
+    .btn-toggle-settings {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-toggle-settings:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Teacher Settings Panel */
+    .teacher-panel {
+      background: #ffffff;
+      border: 3px dashed var(--primary-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 25px;
+      display: none;
+      box-shadow: var(--shadow);
+    }
+
+    .teacher-panel.open {
+      display: block;
+    }
+
+    .teacher-panel h2 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background-color: #00b894;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .btn-action:hover {
+      opacity: 0.9;
+    }
+
+    .btn-action.blue { background-color: #0984e3; }
+    .btn-action.orange { background-color: #e17055; }
+
+    .editor-item {
+      background: #f8f9fa;
+      border: 1px solid #dfe6e9;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .editor-item label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #636e72;
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .editor-input, .editor-textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px solid #dfe6e9;
+      border-radius: 8px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .editor-input:focus, .editor-textarea:focus {
+      border-color: var(--primary-color);
+      outline: none;
+    }
+
+    .editor-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-delete-q {
+      background-color: #ff7675;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      float: right;
+      font-size: 0.8rem;
+    }
+
+    /* Quiz Cards */
+    .quiz-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      border: 2px solid #eef2f5;
+    }
+
+    .question-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2d3436;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .option-btn {
+      width: 100%;
+      background-color: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background-color: #e8f0fe;
+      border-color: var(--primary-color);
+      transform: translateY(-2px);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    /* Feedback Styles */
+    .option-btn.correct {
+      background-color: var(--correct-bg) !important;
+      border-color: var(--correct-border) !important;
+      color: var(--correct-text) !important;
+      font-weight: 600;
+    }
+
+    .option-btn.incorrect {
+      background-color: var(--incorrect-bg) !important;
+      border-color: var(--incorrect-border) !important;
+      color: var(--incorrect-text) !important;
+      opacity: 0.8;
+    }
+
+    .explanation {
+      margin-top: 12px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .explanation.show-correct {
+      display: block;
+      background-color: var(--correct-bg);
+      color: var(--correct-text);
+      border-left: 4px solid var(--correct-border);
+    }
+
+    .explanation.show-incorrect {
+      display: block;
+      background-color: var(--incorrect-bg);
+      color: var(--incorrect-text);
+      border-left: 4px solid var(--incorrect-border);
+    }
+
+    .controls {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .reset-btn {
+      background-color: #ff7675;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      font-family: 'Sniglet', cursive;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(255, 118, 117, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .reset-btn:hover {
+      background-color: #d63031;
+      transform: scale(1.05);
+    }
+
+    /* Responsive adjustments */
+    @media (min-width: 600px) {
+      .options-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .title-area h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header with Live Score & Settings Toggle -->
+  <header>
+    <div class="title-area">
+      <h1>Filipino 10 Quiz</h1>
+      <p>Panitikang Kontemporaryo</p>
+    </div>
+    <div class="header-right">
+      <div class="score-board">
+        Puntos: <span id="score">0</span> / <span id="total">0</span>
+      </div>
+      <button class="btn-toggle-settings" onclick="toggleTeacherPanel()">⚙️ Teacher Panel</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Teacher Settings Panel -->
+    <div class="teacher-panel" id="teacher-panel">
+      <h2>⚙️ Panel ng Guro (Teacher Settings)</h2>
+      <p style="font-size: 0.85rem; color: #636e72; margin-bottom: 15px;">
+        I-edit ang mga tanong, magdagdag, o magbawas. Maaari ring mag-export o mag-import ng data.json file.
+      </p>
+
+      <div class="panel-actions">
+        <button class="btn-action orange" onclick="addNewQuestion()">+ Dagdag Tanong</button>
+        <button class="btn-action blue" onclick="exportJSON()">📥 Export JSON</button>
+        <button class="btn-action" onclick="triggerImport()">📤 Import JSON</button>
+        <button class="btn-action" style="background-color: #6c5ce7;" onclick="saveAndApplyChanges()">💾 Save & Apply</button>
+        <input type="file" id="json-file-input" accept=".json" style="display: none;" onchange="importJSON(event)">
+      </div>
+
+      <!-- Question Editor List -->
+      <div id="editor-list"></div>
+    </div>
+
+    <!-- Quiz Container -->
+    <div id="quiz-container"></div>
+  </div>
+
+  <!-- Global Controls -->
+  <div class="controls">
+    <button class="reset-btn" onclick="resetQuiz()">Ulitin ang Pagsusulit (Reset)</button>
+  </div>
+
+  <script>
+    // Initial Quiz Questions Data
+    let quizData = [
+      {
+        question: "1. Ano ang tinatawag na Panahon ng Kontemporaryo sa panitikang Pilipino?",
+        options: [
+          "A. Ang panahon ng pamamayagpag ng mga panitikang Espanyol.",
+          "B. Ang makabagong panahon mula 1972 (o 1986) hanggang sa kasalukuyan.",
+          "C. Ang panahon bago dumating ang mga mananakop sa Pilipinas.",
+          "D. Ang panahon kung kailan naisulat ang Noli Me Tangere."
+        ],
+        correct: 1,
+        explanation: "TAMA! Ang Panahong Kontemporaryo ay tumutukoy sa makabagong panahon ng panitikan mula sa huling bahagi ng ika-20 siglo hanggang sa kasalukuyan."
+      },
+      {
+        question: "2. Kailan pormal na nagsimula ang panahon ng kontemporaryong panitikan sa Pilipinas?",
+        options: [
+          "A. Noong taong 1898 sa pagdating ng mga Amerikano.",
+          "B. Noong 1945 matapos ang Ikalawang Digmaang Pandaigdig.",
+          "C. Matapos ang deklarasyon ng Batas Militar (1972) at Edsa Revolution (1986).",
+          "D. Noong taong 2010 sa pagsikat ng smartphones."
+        ],
+        correct: 2,
+        explanation: "TAMA! Karaniwang itinuturing na simula nito ang panahon ng Batas Militar (1972) at ang pagpapanumbalik ng kalayaan noong EDSA Revolution (1986)."
+      },
+      {
+        question: "3. Ano-ano ang mga pangyayaring pangkasaysayan na nakaimpluwensiya sa panitikan sa panahong ito?",
+        options: [
+          "A. Ang Digmaang Espanyol-Amerikano.",
+          "B. Batas Militar, EDSA People Power, at Globalisasyon/Teknolohiya.",
+          "C. Ang pagdating ni Ferdinand Magellan noong 1521.",
+          "D. Ang pagkakatatag ng Kilusang Propaganda."
+        ],
+        correct: 1,
+        explanation: "TAMA! Ang political socio-changes tulad ng Martial Law, People Power, at ang digital revolution ang pangunahing humubog dito."
+      },
+      {
+        question: "4. Paano nakaapekto ang Batas Militar sa mga manunulat at sa kanilang mga akda?",
+        options: [
+          "A. Binigyan ng malayang badyet ang lahat ng manunulat.",
+          "B. Nagkaroon ng sensura (censorship) ngunit umusbong ang 'Lihim na Panitikan' o Underground Literature.",
+          "C. Ipinagbawal ang pagsusulat sa wikang Filipino.",
+          "D. Walang naging epekto ito sa larangan ng panitikan."
+        ],
+        correct: 1,
+        explanation: "TAMA! Bagama't may maligpit na sensura, sumiklab ang tapang ng mga manunulat na gumamit ng simbolismo at underground press."
+      },
+      {
+        question: "5. Ano ang naging epekto ng People Power Revolution noong 1986 sa panitikang Pilipino?",
+        options: [
+          "A. Nawalan ng interes ang mga tao sa pagbabasa.",
+          "B. Nagbalik ang ganap na kalayaan sa pagpapahayag at bumukadkad ang iba't ibang tema.",
+          "C. Ipinatigil ang paglimbag ng mga pahayagan.",
+          "D. Pinalitan ang pambansang wika ng Ingles."
+        ],
+        correct: 1,
+        explanation: "TAMA! Naging malaya muli ang mga mamamahayag at manunulat na ipahayag ang kanilang saloobin nang walang takot."
+      },
+      {
+        question: "6. Paano nakaimpluwensiya ang teknolohiya at social media sa pag-unlad ng panitikan?",
+        options: [
+          "A. Ginawa nitong mas mabilis, accessible, at interactive ang pagbabasa at pagpapakalat ng akda.",
+          "B. Sinira nito nang tuluyan ang tradisyon ng pagsulat.",
+          "C. Ginawa nitong eksklusibo sa mayayaman lamang ang panitikan.",
+          "D. Pinilit nito ang mga manunulat na sumulat lamang sa wikang banyaga."
+        ],
+        correct: 0,
+        explanation: "TAMA! Dahil sa internet at social media, mas madaling maibahagi ang mga tula, kwento, at artikulo sa mas maraming mambabasa."
+      },
+      {
+        question: "7. Ano-ano ang mga paksa o tema na karaniwang tinatalakay sa kontemporaryong panitikan?",
+        options: [
+          "A. Karapatang pantao, karanasan ng OFWs, kasarian (LGBTQ+), at usaping pampolitika.",
+          "B. Mga sinaunang alamat at kwentong-bayan lamang.",
+          "C. Pagpaparangal lamang sa mga foreign conquerors.",
+          "D. Purely religious at devotional hymns lamang."
+        ],
+        correct: 0,
+        explanation: "TAMA! Mas malawak at makatotoo ang mga paksa ngayon na sumasalamin sa pang-araw-araw na realidad ng buhay."
+      },
+      {
+        question: "8. Ano ang mga makabagong anyo ng panitikan na umusbong sa panahong kontemporaryo?",
+        options: [
+          "A. Korido, Awit, at Senakulo.",
+          "B. Spoken Word Poetry, Wattpad Stories, Blog, at Textula.",
+          "C. Haiku at Tanaga lamang.",
+          "D. Epiko at Nobela lamang."
+        ],
+        correct: 1,
+        explanation: "TAMA! Ang Spoken Word Poetry, Wattpad, Flash Fiction, at Blogs ay mga sikat na makabagong anyo ng panitikan ngayon."
+      },
+      {
+        question: "9. Paano naiiba ang kontemporaryong panitikan sa mga panitikan ng naunang panahon?",
+        options: [
+          "A. Mas pormal at strikto ang sukat at tugma ng kontemporaryo.",
+          "B. Mas malaya ang estruktura, gumagamit ng kolokyal/makabagong wika, at tapat sa realidad.",
+          "C. Hindi na ito gumagamit ng wikang Tagalog o Filipino.",
+          "D. Mas maikli at walang kabuluhan ang mga tema nito."
+        ],
+        correct: 1,
+        explanation: "TAMA! Mas malaya (free verse), mas nababagay sa modernong henerasyon, at mas hayag ang pagtalakay sa lipunan."
+      },
+      {
+        question: "10. Bakit mahalagang pag-aralan ang kaligirang pangkasaysayan ng kontemporaryong panitikan?",
+        options: [
+          "A. Upang makapasa lamang sa eksam sa Filipino.",
+          "B. Upang maunawaan ang pinagmulan ng mga kaisipan at sitwasyong umiiral sa kasalukuyang akda.",
+          "C. Upang kabisaduhin ang mga petsa at pangalan ng mga lumang presidente.",
+          "D. Upang maiwasan ang pagbabasa ng mga modernong libro."
+        ],
+        correct: 1,
+        explanation: "TAMA! Ang kasaysayan ang nagbibigay-konteksto kung bakit ganun ang tema at damdamin ng mga naisulat na akda."
+      },
+      {
+        question: "11. Paano naipapakita sa mga kontemporaryong akda ang mga suliraning panlipunan?",
+        options: [
+          "A. Sa pamamagitan ng pagtatago ng mga totoong kaganapan.",
+          "B. Sa pamamagitan ng makatotohanang paglalarawan sa kahirapan, korapsyon, at injustice.",
+          "C. Sa pamamagitan ng paggawa ng mga kwentong pangkulam lamang.",
+          "D. Sa pagbalewala sa mga isyung nangyayari sa bansa."
+        ],
+        correct: 1,
+        explanation: "TAMA! Ginagamit ng mga manunulat ang kanilang panulat bilang salamin ng katotohanan at boses ng mamamayan."
+      },
+      {
+        question: "12. Ano ang naging papel ng internet sa pagpapalaganap ng mga akdang pampanitikan?",
+        options: [
+          "A. Naging balakid ito sa paglimbag ng mga libro.",
+          "B. Nagbigay ito ng plataporma para sa mga baguhang manunulat upang maipubliko ang kanilang akda nang mabilis.",
+          "C. Binawasan nito ang interes ng mga kabataan sa pagsusulat.",
+          "D. Ginawa nitong ilegal ang pagbabasa ng panitikan."
+        ],
+        correct: 1,
+        explanation: "TAMA! Dahil sa internet (tulad ng Wattpad at Social Media), hindi na kailangang maghintay ng malaking publisher para maibahagi ang akda."
+      },
+      {
+        question: "13. Paano nakatulong ang kontemporaryong panitikan sa pagpapahayag ng karanasan at pananaw ng kabataan?",
+        options: [
+          "A. Ipinagbawal nito ang partisipasyon ng kabataan.",
+          "B. Nagbigay ito ng boses sa kabataan sa mga isyung tulad ng mental health, identidad, at edukasyon.",
+          "C. Pinilit ang kabataan na gumaya sa pananaw ng mga matatanda.",
+          "D. Wala itong naidulot na maganda sa kabataan."
+        ],
+        correct: 1,
+        explanation: "TAMA! Mas nakakarelate ang kabataan dahil ang mga paksa ay tumatalakay sa mismong pinagdadaanan nila sa modernong panahon."
+      },
+      {
+        question: "14. Ano ang mga hamon na kinakaharap ng mga kontemporaryong manunulat?",
+        options: [
+          "A. Ang kawalan ng papel at tinta sa bansa.",
+          "B. Ang fake news, mabilis na porsyon ng atensyon ng tao (short attention span), at usapin ng copyright/plagiarism.",
+          "C. Ang kawalan ng mga paksang pwedeng isulat.",
+          "D. Ang sobrang dami ng nagbabasa ng printed books."
+        ],
+        correct: 1,
+        explanation: "TAMA! Sa digital age, hamon ang pakikipagkompetensya sa maaikling videos, disimpormasyon, at piracy."
+      },
+      {
+        question: "15. Sa iyong palagay, paano nakatutulong ang panitikan sa pag-unawa sa kasalukuyang lipunan?",
+        options: [
+          "A. Nagbibigay ito ng libangan lamang nang walang malalim na aral.",
+          "B. Nagsisilbi itong kritikal na salamin na nagmumulat sa kaisipan ng tao tungkol sa katotohanan.",
+          "C. Pinapalitan nito ang mga aklat sa agham at matematika.",
+          "D. Tinuturuan nito ang mga tao na maging walang pakialam sa kapwa."
+        ],
+        correct: 1,
+        explanation: "TAMA! Ang panitikan ay hindi lamang sining, ito ay kasangkapan sa pagmulat at pagbabago ng lipunan."
+      }
+    ];
+
+    // State Variables
+    let currentScore = 0;
+    let answeredQuestions = new Set();
+
+    // Toggle Teacher Panel
+    function toggleTeacherPanel() {
+      const panel = document.getElementById('teacher-panel');
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open')) {
+        renderEditor();
+      }
+    }
+
+    // Render Quiz Cards
+    function renderQuiz() {
+      const quizContainer = document.getElementById('quiz-container');
+      quizContainer.innerHTML = '';
+
+      quizData.forEach((qIndex, index) => {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+        card.id = `q-card-${index}`;
+
+        const questionEl = document.createElement('div');
+        questionEl.className = 'question-title';
+        questionEl.innerText = qIndex.question;
+        card.appendChild(questionEl);
+
+        const optionsGrid = document.createElement('div');
+        optionsGrid.className = 'options-grid';
+
+        qIndex.options.forEach((opt, optIdx) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerText = opt;
+          btn.onclick = () => selectOption(index, optIdx);
+          optionsGrid.appendChild(btn);
+        });
+
+        card.appendChild(optionsGrid);
+
+        const expEl = document.createElement('div');
+        expEl.className = 'explanation';
+        expEl.id = `exp-${index}`;
+        card.appendChild(expEl);
+
+        quizContainer.appendChild(card);
+      });
+
+      document.getElementById('total').innerText = quizData.length;
+    }
+
+    // Handle Option Selection
+    function selectOption(qIdx, selectedIdx) {
+      if (answeredQuestions.has(qIdx)) return;
+      
+      answeredQuestions.add(qIdx);
+      const q = quizData[qIdx];
+      const card = document.getElementById(`q-card-${qIdx}`);
+      const buttons = card.querySelectorAll('.option-btn');
+      const exp = document.getElementById(`exp-${qIdx}`);
+
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (selectedIdx === q.correct) {
+        buttons[selectedIdx].classList.add('correct');
+        currentScore++;
+        document.getElementById('score').innerText = currentScore;
+        
+        exp.innerText = q.explanation;
+        exp.className = 'explanation show-correct';
+      } else {
+        buttons[selectedIdx].classList.add('incorrect');
+        if (buttons[q.correct]) {
+          buttons[q.correct].classList.add('correct');
+        }
+        exp.innerText = `MALI. Ang tamang sagot ay: ${q.options[q.correct]}`;
+        exp.className = 'explanation show-incorrect';
+      }
+    }
+
+    // Reset Quiz
+    function resetQuiz() {
+      currentScore = 0;
+      answeredQuestions.clear();
+      document.getElementById('score').innerText = currentScore;
+      renderQuiz();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Render Editor inside Teacher Panel
+    function renderEditor() {
+      const list = document.getElementById('editor-list');
+      list.innerHTML = '';
+
+      quizData.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'editor-item';
+
+        itemDiv.innerHTML = `
+          <button class="btn-delete-q" onclick="deleteQuestion(${index})">🗑️ Bura</button>
+          <strong>Tanong #${index + 1}</strong>
+          
+          <label>Tanong:</label>
+          <input type="text" class="editor-input q-text" value="${escapeHtml(item.question)}">
+
+          <label>Mga Pagpipilian (Options):</label>
+          <div class="editor-options">
+            <input type="text" class="editor-input opt-0" value="${escapeHtml(item.options[0] || '')}">
+            <input type="text" class="editor-input opt-1" value="${escapeHtml(item.options[1] || '')}">
+            <input type="text" class="editor-input opt-2" value="${escapeHtml(item.options[2] || '')}">
+            <input type="text" class="editor-input opt-3" value="${escapeHtml(item.options[3] || '')}">
+          </div>
+
+          <label>Tamang Sagot Index (0 = A, 1 = B, 2 = C, 3 = D):</label>
+          <input type="number" min="0" max="3" class="editor-input q-correct" value="${item.correct}">
+
+          <label>Paliwanag / Feedback:</label>
+          <textarea class="editor-textarea q-exp" rows="2">${escapeHtml(item.explanation || '')}</textarea>
+        `;
+
+        list.appendChild(itemDiv);
+      });
+    }
+
+    // Escape HTML to prevent XSS issues inside input value attributes
+    function escapeHtml(str) {
+      return str.replace(/"/g, '&quot;');
+    }
+
+    // Save Changes made in the editor back to quizData
+    function saveAndApplyChanges() {
+      const items = document.querySelectorAll('.editor-item');
+      const newData = [];
+
+      items.forEach((item) => {
+        const question = item.querySelector('.q-text').value;
+        const opt0 = item.querySelector('.opt-0').value;
+        const opt1 = item.querySelector('.opt-1').value;
+        const opt2 = item.querySelector('.opt-2').value;
+        const opt3 = item.querySelector('.opt-3').value;
+        const correct = parseInt(item.querySelector('.q-correct').value) || 0;
+        const explanation = item.querySelector('.q-exp').value;
+
+        newData.push({
+          question: question,
+          options: [opt0, opt1, opt2, opt3],
+          correct: correct,
+          explanation: explanation
+        });
+      });
+
+      quizData = newData;
+      resetQuiz();
+      alert("✅ Naitabi at naisakatuparan na ang mga pagbabago!");
+    }
+
+    // Add a New Empty Question
+    function addNewQuestion() {
+      quizData.push({
+        question: `${quizData.length + 1}. Bagong Tanong`,
+        options: ["Option A", "Option B", "Option C", "Option D"],
+        correct: 0,
+        explanation: "Paliwanag para sa tamang sagot."
+      });
+      renderEditor();
+    }
+
+    // Delete Question
+    function deleteQuestion(index) {
+      if (confirm("Sigurado ka bang nais mong burahin ang tanong na ito?")) {
+        quizData.splice(index, 1);
+        renderEditor();
+      }
+    }
+
+    // Export current quizData to data.json
+    function exportJSON() {
+      saveAndApplyChanges(); // ensure current edits are included
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(quizData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "data.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // Trigger Hidden File Input
+    function triggerImport() {
+      document.getElementById('json-file-input').click();
+    }
+
+    // Import JSON File
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          if (Array.isArray(importedData)) {
+            quizData = importedData;
+            renderEditor();
+            resetQuiz();
+            alert("✅ matagumpay na na-import ang data.json!");
+          } else {
+            alert("❌ Mali ang format ng JSON file. Siguraduhing ito ay isang array ng mga tanong.");
+          }
+        } catch (err) {
+          alert("❌ Nagkaroon ng error sa pagbasa ng JSON file: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Initialize Quiz on load
+    window.onload = renderQuiz;
+  </script>
+</body>
+</html>
